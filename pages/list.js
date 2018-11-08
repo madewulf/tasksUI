@@ -1,33 +1,71 @@
 import Layout from '../components/SiteLayout';
+import { Component } from 'react';
 import fetch from 'isomorphic-unfetch';
+import http from './utils/http'
 
-const List = (props) => {
-    const colors = ['orange', 'blue', 'green', 'pink'];
-    const colorClassPerUser = {};
-    const list = props.list;
-    list.members.map((member, index) => {
-        colorClassPerUser[member.id] = colors[index % colors.length];
-    })
-    return <Layout>
-        <h1>{props.list.name}</h1>
-        <p>{props.list.description}</p>
-        <div>
-            {props.list.tasks.map((task) => {
-                return <div className="listItem" key={task.key}>
-                    <label className="container" name={task.key}>{task.text}
-                        <input type="checkbox"/>
-                        <span className="checkmark"></span>
-                    </label>
-                    {task.assigned_to.map(user =>
-                        <span className={'userName ' +  colorClassPerUser[user.id]}>
-                            <span>{user.name}</span>
-                        </span>
-                    )}
-                </div>;
-            })}
+class List extends Component {
+    componentWillMount() {
+        this.setState({ taskText: '', list: JSON.parse(JSON.stringify(this.props.list))});
+    }
 
-        </div>
-        <style jsx>{`
+    static async getInitialProps (props) {
+        console.log('getInitialProps', props, this.props);
+        let key = props.query.title;
+        const res = await fetch(`http://localhost:8000/api/l/${key}/`);
+        const data = await res.json();
+
+        return {
+            list: data
+        };
+    }
+
+    async createTask() {
+        console.log(this.props);
+        const newTask = await http.postJson('http://localhost:8000/api/t/', {
+            text: this.state.taskText,
+            list: this.props.list.url_key,
+        });
+        const listClone = JSON.parse(JSON.stringify(this.state.list))
+        listClone.tasks.push(newTask);
+        this.setState({list: listClone});
+    }
+
+    render() {
+        const props = this.props;
+        const colors = ['orange', 'blue', 'green', 'pink'];
+        const colorClassPerUser = {};
+        const list = this.state.list;
+        console.log('list', list);
+        list.members.map((member, index) => {
+            colorClassPerUser[member.id] = colors[index % colors.length];
+        })
+        return <Layout>
+            <h1>{props.list.name}</h1>
+            <p>{props.list.description}</p>
+            <div>
+                {list.tasks.map((task) => {
+                    return <div className="listItem" key={task.key}>
+                        <label className="container" name={task.key}>{task.text}
+                            <input type="checkbox" />
+                            <span className="checkmark"></span>
+                        </label>
+                        {task.assigned_to.map(user =>
+                            <span className={'userName ' + colorClassPerUser[user.id]}>
+                                <span>{user.name}</span>
+                            </span>
+                        )}
+                    </div>;
+                })}
+
+            </div>
+            <h2>Add a task</h2>
+            <div></div><input type="text" id="taskText" value={this.state.taskText}
+                onChange={(event) => {
+                    this.setState({ taskText: event.target.value });
+                }} />
+
+            <button onClick={() => this.createTask()}>Create</button>
+            <style jsx>{`
         .listItem {
             padding:5px;
             margin:1px;
@@ -124,19 +162,7 @@ const List = (props) => {
   transform: rotate(45deg);
 }
     `}</style>
-    </Layout>;
-};
-
-List.getInitialProps = async function() {
-    const key = 'ndxlj';
-    const res = await fetch(`http://localhost:8000/api/l/${key}/`);
-    const data = await res.json();
-
-    console.log(`Show data fetched. Count: ${data}`);
-
-    return {
-        list: data,
-    };
-};
-
-export default List;
+        </Layout>;
+    }
+}
+ export default List;
