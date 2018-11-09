@@ -1,8 +1,9 @@
 import fetch from 'isomorphic-unfetch';
 
-async function postJson(url, body) {
+
+async function jsonReq(url, method, body) {
     const res = await fetch(url, {
-        method: 'post',
+        method: method,
         headers: {
             'Accept': 'application/json, text/plain, */*',
             'Content-Type': 'application/json'
@@ -13,4 +14,16 @@ async function postJson(url, body) {
     return j;
 }
 
-export default {postJson: postJson};
+async function postJson(url, body) {
+    return jsonReq(url, 'post', body);
+}
+
+async function putJson(url, body) {
+    return jsonReq(url, 'put', body);
+}
+
+async function getJson(url, body) {
+    return jsonReq(url, 'get', body);
+}
+
+export default { postJson, putJson, getJson };

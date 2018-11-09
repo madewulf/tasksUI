@@ -11,7 +11,6 @@ class CreatePage extends Component {
     async createList() {
         const key = 'ndxlj';
         const j = await http.postJson(`http://localhost:8000/api/l/`, this.state);
-        console.log(j);
         Router.push('/l/' + j.url_key);
     }
     render() {
