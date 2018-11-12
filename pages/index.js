@@ -12,12 +12,16 @@ const ListLink = (props) => (
 
 export default () => (
   <Layout>
-  <div>
-    <div>1. Create a to-do list</div> 
-    <div>2. Share it to your team</div>
-    <div>3. Let them assign the tasks to themselves</div>
-    <div>4. Receive email updates as tasks get done</div>
-  </div>
-<Button alias={'/create'} href={'/create'}></Button>
+    <div className="row">
+      <div>1. Create a to-do list</div>
+      <div>2. Share it to your team</div>
+      <div>3. Let them assign the tasks to themselves</div>
+      <div>4. Receive email updates as tasks get done</div>
+    </div>
+    <div className="row">
+      <div>
+        <Button alias={'/create'} href={'/create'}></Button>
+      </div>
+    </div>
   </Layout>
 )
