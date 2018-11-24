@@ -7,7 +7,17 @@ class NameForm extends Component {
 
     render(){
         return <div>
-            <h2>Please enter your name:</h2>
+            {
+                this.props.users.map(user => {
+                    return <div className="userButton">
+                        <div className={'userName butt ' + this.props.colorClassPerUser[user.key]} key={'' + user.key }>
+                                    <span>{user.name}</span>
+                        </div>
+                    </div>
+                })
+            }
+
+            <h4>Add a person:</h4>
             <div></div><input type="text" id='name-form-input' value={this.state? this.state.name: ''}
                     onChange={(event) => {
                         this.setState({ name: event.target.value });

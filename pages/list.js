@@ -58,7 +58,7 @@ class List extends Component {
         });
         const listClone = JSON.parse(JSON.stringify(this.state.list))
         listClone.tasks.push(newTask);
-        this.setState({ list: listClone });
+        this.setState({ list: listClone, taskText:'' });
     }
 
     async taskClick(target) {
@@ -72,14 +72,14 @@ class List extends Component {
 
     render() {
         const props = this.props;
-        const colors = ['orange', 'blue', 'green', 'pink'];
+        const colors = ['orange', 'red', 'pink', 'purple', 'blue', 'lightblue', 'lightgreen', 'green'];
         const colorClassPerUser = {};
         const list = this.state.list;
 
         list.members.map((member, index) => {
             colorClassPerUser[member.key] = colors[index % colors.length];
         })
-        const nameForm = <NameForm onOk={ (name) => this.onNamePick(name)} />;
+        const nameForm = <NameForm users={list.members} colorClassPerUser={colorClassPerUser} onOk={ (name) => this.onNamePick(name)} />;
         return <Layout>
             <h1>{props.list.name}</h1>
             <p>{props.list.description}</p>
@@ -97,7 +97,7 @@ class List extends Component {
                         )}
                         {
                             task.assigned_to.length === 0 &&
-                            <span className="assignButton" onClick={() => this.onTaskAssign(task.key)}>Assign to me</span>
+                            <span className="assignButton" onClick={() => this.onTaskAssign(task.key)}>Assign</span>
                         }
                     </div>;
                 })}
@@ -107,7 +107,7 @@ class List extends Component {
             <div><input type="text" id="taskText" value={this.state.taskText}
                 onChange={(event) => {
                     this.setState({ taskText: event.target.value });
-                }} placeholder="New task here ..."/>
+                }} placeholder="New task here ..." onKeyUp={(e)=> { if(e && e.key == 'Enter') this.createTask() }}/>
 <br/>
             <button onClick={() => this.createTask()}>Add</button>
             </div>
@@ -135,30 +135,6 @@ class List extends Component {
                 padding: 3 5;
             }
 
-            .userName {
-                padding:3px;
-                border-radius: 3px;
-                margin-right:3px;
-            }
-            .userName.orange {
-                color: orange;
-                border: 1px solid orange;
-            }
-
-            .userName.blue {
-                color: blue;
-                border: 1px solid blue;
-            }
-
-            .userName.green {
-                color: green;
-                border: 1px solid green;
-            }
-
-            .userName.pink {
-                color: pink;
-                border: 1px solid pink;
-            }
             .strike {
                 text-decoration: line-through;
             }
