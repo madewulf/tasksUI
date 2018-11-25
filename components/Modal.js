@@ -8,8 +8,12 @@ class Modal extends Component {
         } 
         return <div id="myModal" className="modal">
             <div className="modal-content">
-                <span className="close" onClick={()=>this.props.onClose()}>&times;</span>
-                {innerComponent}
+                <div className="modal-close">
+                    <span className="close" onClick={()=>this.props.onClose()}>&times;</span>
+                </div>
+                <div className="modal-inner-content">
+                    {innerComponent}
+                </div>
             </div>
 
             <style jsx>{`
@@ -34,6 +38,13 @@ class Modal extends Component {
                 width: 80%; /* Could be more or less, depending on screen size */
             }
 
+            .modal-inner-content {
+                margin-top: 35px;
+            }
+            .modal-close {
+                margin-top: -30px;
+                margin-right: -9px;
+            }
             /* The Close Button */
             .close {
                 color: #aaa;

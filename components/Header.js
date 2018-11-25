@@ -1,21 +1,37 @@
 import Link from 'next/link'
 import Head from 'next/head'
-const linkStyle = {
-  marginRight: 15
-}
+
 
 const Header = () => (
     <div>
-            <Head>
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <meta charSet="utf-8" />
-    </Head>
-        <Link href="/">
-            <h4 id='branding'>taskli.st</h4>
-        </Link>
+        <Head>
+            <meta name="viewport" content="width=device-width, initial-scale=1"/>
+            <meta charSet="utf-8"/>
+        </Head>
+        <div className="header">
+            <div id="createLink">
+                <Link as="/create" href="/create">Create a new list</Link>
+            </div>
+            <Link href="/">
+                <span id='branding'>taskli.st</span>
+            </Link>
+        </div>
         <style jsx global>{`
 
+.header {
+    margin:20px 0 20px 0;
+}
 
+#branding {
+    padding:7px;
+    color:white;
+    border-radius: 4px;
+    background-color: #222;
+}
+
+#createLink {
+    float:right;
+}
 html {
   font-family: sans-serif; /* 1 */
   -ms-text-size-adjust: 100%; /* 2 */
@@ -28,6 +44,7 @@ html {
 
 body {
   margin: 0;
+  color: #12162D;
 }
 
 /* HTML5 display definitions

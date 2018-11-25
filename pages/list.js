@@ -1,16 +1,17 @@
 import Layout from '../components/SiteLayout';
 import Modal from '../components/Modal';
 import NameForm from '../components/NameForm';
-import { Component } from 'react';
+import {Component} from 'react';
 import fetch from 'isomorphic-unfetch';
-import http from './utils/http'
+import http from '../utils/http';
+import {getColorClassPerUser} from '../utils/colors';
 
 class List extends Component {
     constructor(props) {
         super(props);
-        this.state = { 
-            taskText: '', 
-            list: JSON.parse(JSON.stringify(props.list)), 
+        this.state = {
+            taskText: '',
+            list: JSON.parse(JSON.stringify(props.list)),
             showModal: false,
         };
     }
@@ -21,34 +22,21 @@ class List extends Component {
         const data = await res.json();
 
         return {
-            list: data
+            list: data,
         };
     }
 
     async onTaskAssign(key) {
-        if (this.state.user) {
-            const task = await http.putJson(`http://localhost:8000/api/t/${key}/`, {
-                'users': [this.state.user.key],
-            } );
-            const list = await http.getJson(`http://localhost:8000/api/l/${this.state.list.url_key}/` )
-            this.setState({list: list});
-        } else {
-            this.setState({showModal: true});
-        }
-
+        this.setState({clickedItemKey: key});
+        this.setState({showModal: true});
     }
 
-    async onNamePick(name) {
-        const email = name + '@gmail.com';
-        const user = await(http.postJson('http://localhost:8000/api/u/', {
-            name: name,
-            email: email
-        }))
-
-        const list = await(http.putJson(`http://localhost:8000/api/l/${this.state.list.url_key}/`, {
-            'users': [user.key],
-        } ))
-        this.setState({showModal: false, list: list, user: user});
+    async onUserPick(key) {
+        const task = await http.putJson(`http://localhost:8000/api/t/${this.state.clickedItemKey}/`, {
+            'users': [key],
+        } );
+        const list = await http.getJson(`http://localhost:8000/api/l/${this.state.list.url_key}/` )
+        this.setState({showModal: false, list: list});
     }
 
     async createTask() {
@@ -56,44 +44,46 @@ class List extends Component {
             text: this.state.taskText,
             list: this.props.list.url_key,
         });
-        const listClone = JSON.parse(JSON.stringify(this.state.list))
+        const listClone = JSON.parse(JSON.stringify(this.state.list));
         listClone.tasks.push(newTask);
-        this.setState({ list: listClone, taskText:'' });
+        this.setState({list: listClone, taskText: ''});
     }
 
     async taskClick(target) {
         let status = target.checked ? 'done' : 'waiting';
         await http.putJson('http://localhost:8000/api/t/' + target.id + '/', {
-            status: status
+            status: status,
         });
         const newList = await http.getJson(`http://localhost:8000/api/l/${this.state.list.url_key}/`);
-        this.setState({ list: newList });
+        this.setState({list: newList});
     }
 
     render() {
         const props = this.props;
-        const colors = ['orange', 'red', 'pink', 'purple', 'blue', 'lightblue', 'lightgreen', 'green'];
-        const colorClassPerUser = {};
         const list = this.state.list;
 
-        list.members.map((member, index) => {
-            colorClassPerUser[member.key] = colors[index % colors.length];
-        })
-        const nameForm = <NameForm users={list.members} colorClassPerUser={colorClassPerUser} onOk={ (name) => this.onNamePick(name)} />;
+        const colorClassPerUser = getColorClassPerUser(list.members);
+
+        const nameForm = <NameForm list={list} colorClassPerUser={colorClassPerUser}
+                                   onUserPicked={(key) => this.onUserPick(key)}/>;
         return <Layout>
-            <h1>{props.list.name}</h1>
+            <h1>{props.list.name} <span className="list-edit-icon"><i className="far fa-edit fa-xs"></i></span></h1>
             <p>{props.list.description}</p>
             <div>
                 {list.tasks.map((task) => {
                     const className = 'taskText ' + ((task.status === 'done') ? 'strike' : '');
                     return <div className="listItem" key={task.key}>
-                            <input type="checkbox" id={task.key} onChange={(event) => { this.taskClick(event.target) }} checked={task.status === 'done'} />
+                        <label className="nameLabel"><input type="checkbox" id={task.key} onChange={(event) => {
+                            this.taskClick(event.target);
+                        }} checked={task.status === 'done'}/>
                             <span className={className}>{task.text}</span>
-
+                        </label>
                         {task.assigned_to.map(user =>
-                            <span className={'userName ' + colorClassPerUser[user.key]} key={'' + user.key + '' + task.key}>
+                            <span className={'userName ' + colorClassPerUser[user.key]}
+                                  onClick={() => this.onTaskAssign(task.key)}
+                                  key={'' + user.key + '' + task.key}>
                                 <span>{user.name}</span>
-                            </span>
+                            </span>,
                         )}
                         {
                             task.assigned_to.length === 0 &&
@@ -105,13 +95,16 @@ class List extends Component {
             </div>
 
             <div><input type="text" id="taskText" value={this.state.taskText}
-                onChange={(event) => {
-                    this.setState({ taskText: event.target.value });
-                }} placeholder="New task here ..." onKeyUp={(e)=> { if(e && e.key == 'Enter') this.createTask() }}/>
-<br/>
-            <button onClick={() => this.createTask()}>Add</button>
+                        onChange={(event) => {
+                            this.setState({taskText: event.target.value});
+                        }} placeholder="New task here ..." onKeyUp={(e) => {
+                if (e && e.key == 'Enter') this.createTask();
+            }}/>
+                <br/>
+                <button onClick={() => this.createTask()}>Add</button>
             </div>
-            <Modal show={this.state.showModal} onClose={() => this.setState({showModal: false})} innerComponent={nameForm}/>
+            <Modal show={this.state.showModal} onClose={() => this.setState({showModal: false})}
+                   innerComponent={nameForm}/>
             <style jsx>{`
             .taskText {
                 padding:5px;
@@ -205,8 +198,21 @@ class List extends Component {
                 -ms-transform: rotate(45deg);
                 transform: rotate(45deg);
                 }
+
+                .nameLabel {
+                    display: inline;
+                    font-weight: 100;
+                }
+                .list-edit-icon {
+                    display:none;
+                    font-size:0.8em;
+                }
+                .fa-edit {
+                    color: #ddd;
+                }
     `}</style>
         </Layout>;
     }
 }
+
 export default List;

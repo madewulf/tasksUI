@@ -1,13 +1,9 @@
 import Header from './Header'
 
-const layoutStyle = {
-      margin: 20,
-      padding: 20,
-}
-
 const Layout = (props) => (
-  
-  <div style={layoutStyle} className="container">
+
+  <div className="container">
+      <link href="/static/fa/css/all.css" rel="stylesheet" />
     <Header />
 
     {props.children}
@@ -17,6 +13,10 @@ const Layout = (props) => (
               padding:3px;
               border-radius: 3px;
               margin-right:3px;
+          }
+
+          .container {
+            margin:20px auto;
           }
 
           .userName.orange {
@@ -108,7 +108,7 @@ const Layout = (props) => (
           }
 
            .butt {
-              width : 100%;
+              width : 95%;
               text-align: center;
            }
           .userButton {
