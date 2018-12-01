@@ -10,11 +10,11 @@ class NameForm extends Component {
 
     async onNamePicked(name) {
         if (name) {
-            const user = await(http.postJson('http://localhost:8000/api/u/', {
+            const user = await(http.postJson('/api/u/', {
                 name: name
             }))
 
-            const list = await(http.putJson(`http://localhost:8000/api/l/${this.state.list.url_key}/`, {
+            const list = await(http.putJson(`/api/l/${this.state.list.url_key}/`, {
                 'users': [user.key],
             } ))
             this.setState({list: list, name: ''})

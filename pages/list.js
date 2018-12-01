@@ -2,7 +2,6 @@ import Layout from '../components/SiteLayout';
 import Modal from '../components/Modal';
 import NameForm from '../components/NameForm';
 import {Component} from 'react';
-import fetch from 'isomorphic-unfetch';
 import http from '../utils/http';
 import {getColorClassPerUser} from '../utils/colors';
 
@@ -18,8 +17,7 @@ class List extends Component {
 
     static async getInitialProps(props) {
         let key = props.query.title;
-        const res = await fetch(`http://localhost:8000/api/l/${key}/`);
-        const data = await res.json();
+        const data = await http.getJson(`/api/l/${key}/`);
 
         return {
             list: data,
@@ -32,15 +30,15 @@ class List extends Component {
     }
 
     async onUserPick(key) {
-        const task = await http.putJson(`http://localhost:8000/api/t/${this.state.clickedItemKey}/`, {
+        const task = await http.putJson(`/api/t/${this.state.clickedItemKey}/`, {
             'users': [key],
         } );
-        const list = await http.getJson(`http://localhost:8000/api/l/${this.state.list.url_key}/` )
+        const list = await http.getJson(`/api/l/${this.state.list.url_key}/` )
         this.setState({showModal: false, list: list});
     }
 
     async createTask() {
-        const newTask = await http.postJson('http://localhost:8000/api/t/', {
+        const newTask = await http.postJson('/api/t/', {
             text: this.state.taskText,
             list: this.props.list.url_key,
         });
@@ -51,10 +49,10 @@ class List extends Component {
 
     async taskClick(target) {
         let status = target.checked ? 'done' : 'waiting';
-        await http.putJson('http://localhost:8000/api/t/' + target.id + '/', {
+        await http.putJson('/api/t/' + target.id + '/', {
             status: status,
         });
-        const newList = await http.getJson(`http://localhost:8000/api/l/${this.state.list.url_key}/`);
+        const newList = await http.getJson(`/api/l/${this.state.list.url_key}/`);
         this.setState({list: newList});
     }
 
@@ -108,7 +106,6 @@ class List extends Component {
             <style jsx>{`
             .taskText {
                 padding:5px;
-                display:inline-block;
             }
 
             .assignButton {

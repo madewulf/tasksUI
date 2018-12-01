@@ -12,7 +12,7 @@ class CreatePage extends Component {
         if (this.state.name == '') {
             this.setState({ nameError: 'Name is mandatory'})
         } else {
-            const j = await http.postJson(`http://localhost:8000/api/l/`, this.state);
+            const j = await http.postJson(`/api/l/`, this.state);
             Router.push('/l/' + j.url_key);
         }
     }

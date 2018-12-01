@@ -1,7 +1,9 @@
 import fetch from 'isomorphic-unfetch';
+import getConfig from 'next/config'
+const {publicRuntimeConfig} = getConfig()
 
-
-async function jsonReq(url, method, body) {
+async function jsonReq(path, method, body) {
+    const url = "https://tasks.multitasked.net/" + path
     const res = await fetch(url, {
         method: method,
         headers: {
@@ -14,16 +16,16 @@ async function jsonReq(url, method, body) {
     return j;
 }
 
-async function postJson(url, body) {
-    return jsonReq(url, 'post', body);
+async function postJson(path, body) {
+    return jsonReq(path, 'post', body);
 }
 
-async function putJson(url, body) {
-    return jsonReq(url, 'put', body);
+async function putJson(path, body) {
+    return jsonReq(path, 'put', body);
 }
 
-async function getJson(url, body) {
-    return jsonReq(url, 'get', body);
+async function getJson(path, body) {
+    return jsonReq(path, 'get', body);
 }
 
 export default { postJson, putJson, getJson };
