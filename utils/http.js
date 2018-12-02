@@ -3,7 +3,7 @@ import getConfig from 'next/config'
 const {publicRuntimeConfig} = getConfig()
 
 async function jsonReq(path, method, body) {
-    const url = "https://tasks.multitasked.net/" + path
+    const url = "https://tasks.multitasked.net" + path
     const res = await fetch(url, {
         method: method,
         headers: {

@@ -13,7 +13,7 @@ class CreatePage extends Component {
             this.setState({ nameError: 'Name is mandatory'})
         } else {
             const j = await http.postJson(`/api/l/`, this.state);
-            Router.push('/l/' + j.url_key);
+            window.location.replace('/l/' + j.url_key);
         }
     }
     render() {
