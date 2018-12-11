@@ -32,19 +32,21 @@ class List extends Component {
     async onUserPick(key) {
         const task = await http.putJson(`/api/t/${this.state.clickedItemKey}/`, {
             'users': [key],
-        } );
-        const list = await http.getJson(`/api/l/${this.state.list.url_key}/` )
+        });
+        const list = await http.getJson(`/api/l/${this.state.list.url_key}/`);
         this.setState({showModal: false, list: list});
     }
 
     async createTask() {
-        const newTask = await http.postJson('/api/t/', {
-            text: this.state.taskText,
-            list: this.props.list.url_key,
-        });
-        const listClone = JSON.parse(JSON.stringify(this.state.list));
-        listClone.tasks.push(newTask);
-        this.setState({list: listClone, taskText: ''});
+        if (this.state.taskText.trim() != '') {
+            const newTask = await http.postJson('/api/t/', {
+                text: this.state.taskText,
+                list: this.props.list.url_key,
+            });
+            const listClone = JSON.parse(JSON.stringify(this.state.list));
+            listClone.tasks.push(newTask);
+            this.setState({list: listClone, taskText: ''});
+        }
     }
 
     async taskClick(target) {
