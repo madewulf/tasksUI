@@ -5,7 +5,7 @@ import { getColorClassPerUser } from '../utils/colors'
 class NameForm extends Component {
     constructor(props) {
         super(props);
-        this.state = {name: '', list: this.props.list};
+        this.state = {name: '', list: this.props.list, task: this.props.task};
     }
 
     async onNamePicked(name) {
@@ -22,10 +22,12 @@ class NameForm extends Component {
     }
 
     render(){
-        const colorClassPerUser = getColorClassPerUser(this.state.list.members);
+        const colorClassPerUser = getColorClassPerUser(this.state.list.members)
+        let varKeys = this.state.task.assigned_to.map(user => user.key)
+
         return <div>
             {
-                this.state.list.members.map(user => {
+                this.state.list.members.filter(user => !varKeys.includes(user.key) ).map(user => {
                     return <div className="userButton">
                         <div onClick={() => this.props.onUserPicked(user.key)} className={'userName butt ' + colorClassPerUser[user.key]} key={'' + user.key }>
                                     <span>{user.name}</span>

@@ -13,6 +13,7 @@ const Layout = (props) => (
               padding:3px;
               border-radius: 3px;
               margin-right:3px;
+              cursor: pointer;
           }
 
           .container {

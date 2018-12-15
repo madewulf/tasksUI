@@ -24,13 +24,21 @@ class List extends Component {
         };
     }
 
-    async onTaskAssign(key) {
-        this.setState({clickedItemKey: key});
+    async onTaskUnassign(taskKey, userKey) {
+        const task = await http.putJson(`/api/t/${taskKey}/`, {
+            'users': ['-' + userKey],
+        });
+        const list = await http.getJson(`/api/l/${this.state.list.url_key}/`);
+        this.setState({showModal: false, list: list});
+    }
+
+    async onTaskAssign(task) {
+        this.setState({clickedTask: task});
         this.setState({showModal: true});
     }
 
     async onUserPick(key) {
-        const task = await http.putJson(`/api/t/${this.state.clickedItemKey}/`, {
+        await http.putJson(`/api/t/${this.state.clickedTask.key}/`, {
             'users': [key],
         });
         const list = await http.getJson(`/api/l/${this.state.list.url_key}/`);
@@ -58,14 +66,36 @@ class List extends Component {
         this.setState({list: newList});
     }
 
+    taskEdit(taskKey) {
+
+        const listClone = JSON.parse(JSON.stringify(this.state.list));
+        listClone.tasks.map((task) => {
+            if (task.key == taskKey) {
+                task.edit = true
+            }
+        })
+        this.setState({list: listClone});
+    }
+
+    async taskChange(taskKey, text) {
+        await http.putJson('/api/t/' + taskKey+ '/', {
+            text: text,
+        });
+        const newList = await http.getJson(`/api/l/${this.state.list.url_key}/`);
+        this.setState({list: newList});
+    }
+
     render() {
         const props = this.props;
         const list = this.state.list;
 
         const colorClassPerUser = getColorClassPerUser(list.members);
 
-        const nameForm = <NameForm list={list} colorClassPerUser={colorClassPerUser}
-                                   onUserPicked={(key) => this.onUserPick(key)}/>;
+        const nameForm = <NameForm list={list}
+                                   colorClassPerUser={colorClassPerUser}
+                                   onUserPicked={(key) => this.onUserPick(key)}
+                                    task={this.state.clickedTask}
+                                    />;
         return <Layout>
             <h1>{props.list.name} <span className="list-edit-icon"><i className="far fa-edit fa-xs"></i></span></h1>
             <p>{props.list.description}</p>
@@ -73,21 +103,34 @@ class List extends Component {
                 {list.tasks.map((task) => {
                     const className = 'taskText ' + ((task.status === 'done') ? 'strike' : '');
                     return <div className="listItem" key={task.key}>
-                        <label className="nameLabel"><input type="checkbox" id={task.key} onChange={(event) => {
+                        <input type="checkbox" id={task.key} onChange={(event) => {
                             this.taskClick(event.target);
                         }} checked={task.status === 'done'}/>
-                            <span className={className}>{task.text}</span>
-                        </label>
+                            {!task.edit && <span className={className} onClick={() => {
+                                this.taskEdit(task.key)
+                            }
+                            }>{task.text}</span>}
+                            {task.edit && <span> <input type="text" defaultValue={task.text} onBlur={(event) => {
+                                this.taskChange(task.key, event.target.value)
+                            }} onKeyUp={(e) => {
+                                if (e && e.key == 'Enter') this.taskChange(task.key, event.target.value)
+                            }}/> </span>}
+
                         {task.assigned_to.map(user =>
                             <span className={'userName ' + colorClassPerUser[user.key]}
-                                  onClick={() => this.onTaskAssign(task.key)}
+                                  onClick={() => this.onTaskUnassign(task.key, user.key)}
                                   key={'' + user.key + '' + task.key}>
                                 <span>{user.name}</span>
                             </span>,
                         )}
                         {
                             task.assigned_to.length === 0 &&
-                            <span className="assignButton" onClick={() => this.onTaskAssign(task.key)}>Assign</span>
+                            <span className="assignButton" onClick={() => this.onTaskAssign(task)}>Assign</span>
+                        }
+                        {
+                            task.assigned_to.length !== 0 &&
+                            <span className="assignButton" onClick={() => this.onTaskAssign(task)}><i
+                                className="fas fa-plus"></i></span>
                         }
                     </div>;
                 })}

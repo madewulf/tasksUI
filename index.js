@@ -10,16 +10,18 @@ app.prepare()
   const server = express()
 
   server.get('/l/:id', (req, res) => {
+    console.log('brol')
     const actualPage = '/list'
     const queryParams = { title: req.params.id } 
     app.render(req, res, actualPage, queryParams)
   })
 
   server.get('*', (req, res) => {
+    console.log('coucou')
     return handle(req, res)
   })
 
-  server.listen(3000, (err) => {
+  server.listen(3001, (err) => {
     if (err) throw err
   })
 })

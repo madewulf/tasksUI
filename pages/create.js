@@ -1,6 +1,5 @@
 import Layout from '../components/SiteLayout.js'
 import React, { Component, PropTypes } from 'react';
-import Router from 'next/router'
 import http from '../utils/http'
 
 class CreatePage extends Component {
