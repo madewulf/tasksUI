@@ -109,7 +109,6 @@ const Layout = (props) => (
           }
 
            .butt {
-              width : 95%;
               text-align: center;
            }
           .userButton {

@@ -35,6 +35,7 @@ class Modal extends Component {
                 margin: 15% auto; /* 15% from the top and centered */
                 padding: 20px;
                 border: 1px solid #888;
+                border-radius: 3px;
                 width: 80%; /* Could be more or less, depending on screen size */
             }
 
@@ -42,8 +43,8 @@ class Modal extends Component {
                 margin-top: 35px;
             }
             .modal-close {
-                margin-top: -30px;
-                margin-right: -9px;
+                margin-top: -18px;
+                margin-bottom: 42px;
             }
             /* The Close Button */
             .close {

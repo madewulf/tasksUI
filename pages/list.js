@@ -12,6 +12,7 @@ class List extends Component {
             taskText: '',
             list: JSON.parse(JSON.stringify(props.list)),
             showModal: false,
+            editingTask: false
         };
     }
 
@@ -25,7 +26,7 @@ class List extends Component {
     }
 
     async onTaskUnassign(taskKey, userKey) {
-        const task = await http.putJson(`/api/t/${taskKey}/`, {
+        await http.putJson(`/api/t/${taskKey}/`, {
             'users': ['-' + userKey],
         });
         const list = await http.getJson(`/api/l/${this.state.list.url_key}/`);
@@ -63,7 +64,7 @@ class List extends Component {
             status: status,
         });
         const newList = await http.getJson(`/api/l/${this.state.list.url_key}/`);
-        this.setState({list: newList});
+        this.setState({list: newList, editingTask: true});
     }
 
     taskEdit(taskKey) {
@@ -72,9 +73,11 @@ class List extends Component {
         listClone.tasks.map((task) => {
             if (task.key == taskKey) {
                 task.edit = true
+            } else {
+                task.edit = false
             }
         })
-        this.setState({list: listClone});
+        this.setState({list: listClone, editingTask: false});
     }
 
     async taskChange(taskKey, text) {
@@ -110,7 +113,7 @@ class List extends Component {
                                 this.taskEdit(task.key)
                             }
                             }>{task.text}</span>}
-                            {task.edit && <span> <input type="text" defaultValue={task.text} onBlur={(event) => {
+                            {task.edit && <span> <input type="text" autoFocus defaultValue={task.text} onBlur={(event) => {
                                 this.taskChange(task.key, event.target.value)
                             }} onKeyUp={(e) => {
                                 if (e && e.key == 'Enter') this.taskChange(task.key, event.target.value)
@@ -137,7 +140,7 @@ class List extends Component {
 
             </div>
 
-            <div><input type="text" id="taskText" value={this.state.taskText}
+            <div><input type="text" id="taskText" autoFocus={!this.state.editingTask} value={this.state.taskText}
                         onChange={(event) => {
                             this.setState({taskText: event.target.value});
                         }} placeholder="New task here ..." onKeyUp={(e) => {
