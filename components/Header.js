@@ -11,7 +11,7 @@ const Header = (props) => {
             <meta property="og:title" content={(!!props.meta && props.meta.name) || "Shareable to do lists -- taskli.st"}/>
             <meta property="og:type" content="website"/>
             <meta property="og:url" content={(!!props.meta && ("https://taskli.st/l/" + props.meta.url_key) ) || "https://taskli.st/"}/>
-            <meta property="og:image" content="https://s3.eu-central-1.amazonaws.com/static.btlas.com/tasklist.jpg"/>
+            <meta property="og:image" content="https://s3.eu-central-1.amazonaws.com/static.btlas.com/hero-2.jpg"/>
             <meta property="og:site_name" content="taskli.st"/>
             <meta property="fb:admins" content="548900828"/>
             <meta property="og:description"
@@ -500,6 +500,7 @@ body {
   font-size: 1.5em; /* currently ems cause chrome bug misinterpreting rems on body element */
   line-height: 1.6;
   font-weight: 400;
+
   font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
   color: #222; }
 
