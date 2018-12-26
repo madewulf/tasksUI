@@ -99,7 +99,8 @@ class List extends Component {
                                    onUserPicked={(key) => this.onUserPick(key)}
                                     task={this.state.clickedTask}
                                     />;
-        return <Layout>
+
+        return <Layout meta={props.list}>
             <h1>{props.list.name} <span className="list-edit-icon"><i className="far fa-edit fa-xs"></i></span></h1>
             <p>{props.list.description}</p>
             <div>

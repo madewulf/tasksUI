@@ -4,7 +4,7 @@ const Layout = (props) => (
 
   <div className="container">
       <link href="/static/fa/css/all.css" rel="stylesheet" />
-    <Header />
+    <Header meta={props.meta} />
 
     {props.children}
       <style jsx global>

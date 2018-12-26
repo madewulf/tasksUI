@@ -2,18 +2,20 @@ import Link from 'next/link'
 import Head from 'next/head'
 
 
-const Header = () => (
-    <div>
+const Header = (props) => {
+    return <div>
         <Head>
             <meta name="viewport" content="width=device-width, initial-scale=1"/>
             <meta charSet="utf-8"/>
-            <meta property="og:title" content="The shareable to do list. -- taskli.st" />
-            <meta property="og:type" content="website" />
-            <meta property="og:url" content="https://taskli.st/" />
-            <meta property="og:image" content="https://s3.eu-central-1.amazonaws.com/static.btlas.com/tasklist.jpg" />
-            <meta property="og:site_name" content="taskli.st" />
-            <meta property="fb:admins" content="548900828" />
-            <meta property="og:description" content="Create your to do list for a group of people, send them, and let them assign the task themselves and complete the work." />
+            <title>{(!!props.meta && props.meta.name) || "Shareable to do lists -- taskli.st"}</title>
+            <meta property="og:title" content={(!!props.meta && props.meta.name) || "Shareable to do lists -- taskli.st"}/>
+            <meta property="og:type" content="website"/>
+            <meta property="og:url" content={(!!props.meta && ("https://taskli.st/l/" + props.meta.url_key) ) || "https://taskli.st/"}/>
+            <meta property="og:image" content="https://s3.eu-central-1.amazonaws.com/static.btlas.com/tasklist.jpg"/>
+            <meta property="og:site_name" content="taskli.st"/>
+            <meta property="fb:admins" content="548900828"/>
+            <meta property="og:description"
+                  content={(!!props.meta && props.meta.description)  || "Create your to do list for a group of people, send them, and let them assign the task themselves and complete the work."}/>
         </Head>
         <div className="header">
             <div id="createLink">
@@ -794,6 +796,6 @@ there.
 
 `}</style>
     </div>
-)
+}
 
 export default Header
