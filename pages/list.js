@@ -12,7 +12,8 @@ class List extends Component {
             taskText: '',
             list: JSON.parse(JSON.stringify(props.list)),
             showModal: false,
-            editingTask: false
+            editingTask: false,
+            listenerAdded: false,
         };
     }
 
@@ -72,23 +73,38 @@ class List extends Component {
         const listClone = JSON.parse(JSON.stringify(this.state.list));
         listClone.tasks.map((task) => {
             if (task.key == taskKey) {
-                task.edit = true
+                task.edit = true;
             } else {
-                task.edit = false
+                task.edit = false;
             }
-        })
+        });
         this.setState({list: listClone, editingTask: false});
     }
 
     async taskChange(taskKey, text) {
-        await http.putJson('/api/t/' + taskKey+ '/', {
+        await http.putJson('/api/t/' + taskKey + '/', {
             text: text,
         });
         const newList = await http.getJson(`/api/l/${this.state.list.url_key}/`);
         this.setState({list: newList});
     }
 
+    async handleVisibilityChange() {
+        if (!document.hidden) {
+            const data = await http.getJson(`/api/l/${this.state.list.url_key}/`);
+            this.setState({list: data});
+        }
+    }
+
     render() {
+        if (!this.state.listenerAdded) {
+
+            if (typeof window !== 'undefined') {
+                document.addEventListener('visibilitychange', () => this.handleVisibilityChange(), false);
+                window.addEventListener('focus', () => this.handleVisibilityChange(), false);
+                this.state.listenerAdded = true;
+            }
+        }
         const props = this.props;
         const list = this.state.list;
 
@@ -97,8 +113,11 @@ class List extends Component {
         const nameForm = <NameForm list={list}
                                    colorClassPerUser={colorClassPerUser}
                                    onUserPicked={(key) => this.onUserPick(key)}
-                                    task={this.state.clickedTask}
-                                    />;
+                                   task={this.state.clickedTask}
+                                   onNewList={(list) => {
+                                       this.setState({list: list});
+                                   }}
+        />;
 
         return <Layout meta={props.list}>
             <h1>{props.list.name} <span className="list-edit-icon"><i className="far fa-edit fa-xs"></i></span></h1>
@@ -110,15 +129,15 @@ class List extends Component {
                         <input type="checkbox" id={task.key} onChange={(event) => {
                             this.taskClick(event.target);
                         }} checked={task.status === 'done'}/>
-                            {!task.edit && <span className={className} onClick={() => {
-                                this.taskEdit(task.key)
-                            }
-                            }>{task.text}</span>}
-                            {task.edit && <span> <input type="text" autoFocus defaultValue={task.text} onBlur={(event) => {
-                                this.taskChange(task.key, event.target.value)
-                            }} onKeyUp={(e) => {
-                                if (e && e.key == 'Enter') this.taskChange(task.key, event.target.value)
-                            }}/> </span>}
+                        {!task.edit && <span className={className} onClick={() => {
+                            this.taskEdit(task.key);
+                        }
+                        }>{task.text}</span>}
+                        {task.edit && <span> <input type="text" autoFocus defaultValue={task.text} onBlur={(event) => {
+                            this.taskChange(task.key, event.target.value);
+                        }} onKeyUp={(e) => {
+                            if (e && e.key == 'Enter') this.taskChange(task.key, event.target.value);
+                        }}/> </span>}
 
                         {task.assigned_to.map(user =>
                             <span className={'userName ' + colorClassPerUser[user.key]}
