@@ -29,7 +29,7 @@ class NameForm extends Component {
         return <div>
             {
                 this.state.list.members.filter(user => !varKeys.includes(user.key)).map(user => {
-                    return <div className="userButton">
+                    return <div className="userButton" key={user.key}>
                         <div onClick={() => this.props.onUserPicked(user.key)}
                              className={'userName butt ' + colorClassPerUser[user.key]} key={'' + user.key}>
                             <span>{user.name}</span>

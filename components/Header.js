@@ -1,25 +1,48 @@
-import Link from 'next/link'
-import Head from 'next/head'
-
+import Link from 'next/link';
+import Head from 'next/head';
 
 const Header = (props) => {
     return <div>
         <Head>
             <meta name="viewport" content="width=device-width, initial-scale=1"/>
             <meta charSet="utf-8"/>
-            <title>{(!!props.meta && props.meta.name) || "Shareable to do lists -- taskli.st"}</title>
-            <meta property="og:title" content={(!!props.meta && props.meta.name) || "Shareable to do lists -- taskli.st"}/>
+            <title>{(!!props.meta && props.meta.name) || 'Shareable to do lists -- taskli.st'}</title>
+            <meta property="og:title"
+                  content={(!!props.meta && props.meta.name) || 'Shareable to do lists -- taskli.st'}/>
             <meta property="og:type" content="website"/>
-            <meta property="og:url" content={(!!props.meta && ("https://taskli.st/l/" + props.meta.url_key) ) || "https://taskli.st/"}/>
+            <meta property="og:url"
+                  content={(!!props.meta && ('https://taskli.st/l/' + props.meta.url_key)) || 'https://taskli.st/'}/>
             <meta property="og:image" content="https://s3.eu-central-1.amazonaws.com/static.btlas.com/hero-2.jpg"/>
             <meta property="og:site_name" content="taskli.st"/>
             <meta property="fb:admins" content="548900828"/>
             <meta property="og:description"
-                  content={(!!props.meta && props.meta.description)  || "Create your to do list for a group of people, send them, and let them assign the task themselves and complete the work."}/>
+                  content={(!!props.meta && props.meta.description) ||
+                  'Create your to do list for a group of people, send them, and let them assign the task themselves and complete the work.'}/>
+
+            <link rel="shortcut icon" href="/static/favicon.ico"/>
+            <link rel="icon" sizes="16x16 32x32 64x64" href="/static/favicon.ico"/>
+            <link rel="icon" type="image/png" sizes="196x196" href="/static/favicon-192.png"/>
+            <link rel="icon" type="image/png" sizes="160x160" href="/static/favicon-160.png"/>
+            <link rel="icon" type="image/png" sizes="96x96" href="/static/favicon-96.png"/>
+            <link rel="icon" type="image/png" sizes="64x64" href="/static/favicon-64.png"/>
+            <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32.png"/>
+            <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16.png"/>
+            <link rel="apple-touch-icon" href="/static/favicon-57.png"/>
+            <link rel="apple-touch-icon" sizes="114x114" href="/static/favicon-114.png"/>
+            <link rel="apple-touch-icon" sizes="72x72" href="/static/favicon-72.png"/>
+            <link rel="apple-touch-icon" sizes="144x144" href="/static/favicon-144.png"/>
+            <link rel="apple-touch-icon" sizes="60x60" href="/static/favicon-60.png"/>
+            <link rel="apple-touch-icon" sizes="120x120" href="/static/favicon-120.png"/>
+            <link rel="apple-touch-icon" sizes="76x76" href="/static/favicon-76.png"/>
+            <link rel="apple-touch-icon" sizes="152x152" href="/static/favicon-152.png"/>
+            <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon-180.png"/>
+            <meta name="msapplication-TileColor" content="#FFFFFF"/>
+            <meta name="msapplication-TileImage" content="/favicon-144.png"/>
+            <meta name="msapplication-config" content="/browserconfig.xml"/>
         </Head>
         <div className="header">
             <div id="createLink">
-                <Link as="/create" href="/create">Create a new list</Link>
+                <Link as="/create" href="/create"><a>Create a new list</a></Link>
             </div>
             <Link href="/">
                 <span id='branding'>taskli.st</span>
@@ -796,7 +819,7 @@ there.
 
 
 `}</style>
-    </div>
-}
+    </div>;
+};
 
-export default Header
+export default Header;
