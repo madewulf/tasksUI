@@ -1,6 +1,7 @@
 import Layout from '../components/SiteLayout';
 import Modal from '../components/Modal';
 import NameForm from '../components/NameForm';
+import EditForm from '../components/EditForm';
 import {Component} from 'react';
 import http from '../utils/http';
 import {getColorClassPerUser} from '../utils/colors';
@@ -12,6 +13,7 @@ class List extends Component {
             taskText: '',
             list: JSON.parse(JSON.stringify(props.list)),
             showModal: false,
+            modal: 'nameForm',
             editingTask: false,
             listenerAdded: false,
         };
@@ -35,8 +37,11 @@ class List extends Component {
     }
 
     async onTaskAssign(task) {
-        this.setState({clickedTask: task});
-        this.setState({showModal: true});
+        this.setState({modal: 'nameForm', clickedTask: task, showModal: true})
+    }
+
+    async onEditList() {
+        this.setState({modal: 'editForm',  showModal: true})
     }
 
     async onUserPick(key) {
@@ -53,14 +58,16 @@ class List extends Component {
                 text: this.state.taskText,
                 list: this.props.list.url_key,
             });
-            const listClone = JSON.parse(JSON.stringify(this.state.list));
-            listClone.tasks.push(newTask);
-            this.setState({list: listClone, taskText: ''});
+
+            const list = await http.getJson(`/api/l/${this.state.list.url_key}/`);
+            this.setState({list: list, taskText: ''});
         }
     }
 
-    async taskClick(target) {
+    async taskClick(target, task) {
         let status = target.checked ? 'done' : 'waiting';
+        task.status = status //hackish way to implement optimistic modification
+        this.setState({list: this.state.list})
         await http.putJson('/api/t/' + target.id + '/', {
             status: status,
         });
@@ -109,25 +116,35 @@ class List extends Component {
         const list = this.state.list;
 
         const colorClassPerUser = getColorClassPerUser(list.members);
+        let innerComponent
+        let modalTitle
+        if (this.state.modal === 'nameForm') {
+            innerComponent = <NameForm list={list}
+                                       colorClassPerUser={colorClassPerUser}
+                                       onUserPicked={(key) => this.onUserPick(key)}
+                                       task={this.state.clickedTask}
+                                       onNewList={(list) => {
+                                           this.setState({list: list});
+                                       }}
+            />;
+            modalTitle = "Tap on a name"
+        } else {
+            innerComponent = <EditForm list={list}/>
+            modalTitle = "Edit the list"
+        }
 
-        const nameForm = <NameForm list={list}
-                                   colorClassPerUser={colorClassPerUser}
-                                   onUserPicked={(key) => this.onUserPick(key)}
-                                   task={this.state.clickedTask}
-                                   onNewList={(list) => {
-                                       this.setState({list: list});
-                                   }}
-        />;
+
 
         return <Layout meta={props.list}>
-            <h1>{props.list.name} <span className="list-edit-icon"><i className="far fa-edit fa-xs"></i></span></h1>
+            <div className="list-edit-icon"  onClick={() => this.onEditList()}><i className="far fa-edit fa-xs"></i></div>
+            <h1>{props.list.name} </h1>
             <p>{props.list.description}</p>
             <div>
                 {list.tasks.map((task) => {
                     const className = 'taskText ' + ((task.status === 'done') ? 'strike' : '');
                     return <div className="listItem" key={task.key}>
                         <input type="checkbox" id={task.key} onChange={(event) => {
-                            this.taskClick(event.target);
+                            this.taskClick(event.target, task);
                         }} checked={task.status === 'done'}/>
                         {!task.edit && <span className={className} onClick={() => {
                             this.taskEdit(task.key);
@@ -139,7 +156,7 @@ class List extends Component {
                             if (e && e.key == 'Enter') this.taskChange(task.key, event.target.value);
                         }}/> </span>}
 
-                        {task.assigned_to.map(user =>
+                        {this.state.list.assignationsOn && task.assigned_to.map(user =>
                             <span className={'userName ' + colorClassPerUser[user.key]}
                                   onClick={() => this.onTaskUnassign(task.key, user.key)}
                                   key={'' + user.key + '' + task.key}>
@@ -147,11 +164,11 @@ class List extends Component {
                             </span>,
                         )}
                         {
-                            task.assigned_to.length === 0 &&
+                            this.state.list.assignationsOn && task.assigned_to.length === 0 &&
                             <span className="assignButton" onClick={() => this.onTaskAssign(task)}>Assign</span>
                         }
                         {
-                            task.assigned_to.length !== 0 &&
+                            this.state.list.assignationsOn && task.assigned_to.length !== 0 &&
                             <span className="assignButton" onClick={() => this.onTaskAssign(task)}><i
                                 className="fas fa-plus"></i></span>
                         }
@@ -169,8 +186,8 @@ class List extends Component {
                 <br/>
                 <button onClick={() => this.createTask()}>Add</button>
             </div>
-            <Modal show={this.state.showModal} onClose={() => this.setState({showModal: false})}
-                   innerComponent={nameForm}/>
+            <Modal title={modalTitle} show={this.state.showModal} onClose={() => this.setState({showModal: false})}
+                   innerComponent={innerComponent}/>
             <style jsx>{`
             .taskText {
                 padding:5px;
@@ -269,11 +286,13 @@ class List extends Component {
                     font-weight: 100;
                 }
                 .list-edit-icon {
-                    display:none;
-                    font-size:0.8em;
+                    font-size:2em;
+                    float:right;
+                    padding-left:10px;
                 }
                 .fa-edit {
                     color: #ddd;
+                    cursor: pointer;
                 }
     `}</style>
         </Layout>;

@@ -9,8 +9,11 @@ class Modal extends Component {
         return <div id="myModal" className="modal">
             <div className="modal-content">
                 <div className="modal-close">
+
                     <span className="close" onClick={()=>this.props.onClose()}>&times;</span>
+                    <h4 className="modal-title">{this.props.title}</h4>
                 </div>
+
                 <div className="modal-inner-content">
                     {innerComponent}
                 </div>
@@ -40,11 +43,10 @@ class Modal extends Component {
             }
 
             .modal-inner-content {
-                margin-top: 35px;
+
             }
             .modal-close {
                 margin-top: -18px;
-                margin-bottom: 42px;
             }
             /* The Close Button */
             .close {
@@ -59,6 +61,11 @@ class Modal extends Component {
                 color: black;
                 text-decoration: none;
                 cursor: pointer;
+            }
+            .modal-title {
+                padding: 10px 0;
+                margin-bottom:0;
+                color: #444;
             }
             `}</style>
         </div >
