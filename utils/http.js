@@ -2,30 +2,35 @@ import fetch from 'isomorphic-unfetch';
 import getConfig from 'next/config'
 const {publicRuntimeConfig} = getConfig()
 
-async function jsonReq(path, method, body) {
-    const url = "https://tasks.multitasked.net/" + path
+async function jsonReq(path, method, body, token) {
+    const url = "http://localhost:8000" + path
+    const headers = {
+        'Accept': 'application/json, text/plain, */*',
+        'Content-Type': 'application/json'
+    }
+
+    if (token) {
+        headers['x-tasklist-token']=token;
+    }
     const res = await fetch(url, {
         method: method,
-        headers: {
-            'Accept': 'application/json, text/plain, */*',
-            'Content-Type': 'application/json'
-        },
+        headers: headers,
         body: JSON.stringify(body)
     });
     const j = await res.json();
     return j;
 }
 
-async function postJson(path, body) {
-    return jsonReq(path, 'post', body);
+async function postJson(path, body, token) {
+    return jsonReq(path, 'post', body, token);
 }
 
-async function putJson(path, body) {
-    return jsonReq(path, 'put', body);
+async function putJson(path, body, token) {
+    return jsonReq(path, 'put', body, token);
 }
 
-async function getJson(path, body) {
-    return jsonReq(path, 'get', body);
+async function getJson(path, token) {
+    return jsonReq(path, 'get', undefined, token);
 }
 
 export default { postJson, putJson, getJson };

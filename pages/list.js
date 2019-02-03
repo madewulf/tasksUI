@@ -129,8 +129,12 @@ class List extends Component {
             />;
             modalTitle = "Tap on a name"
         } else {
-            innerComponent = <EditForm list={list}/>
+            innerComponent = <EditForm list={list}
+                                       onNewList={(list) => {
+                this.setState({list: list});
+            }}/>
             modalTitle = "Edit the list"
+
         }
 
 
