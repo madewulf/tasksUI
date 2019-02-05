@@ -3,34 +3,14 @@ import Button from '../components/Button'
 import {Component} from 'react';
 import http from '../utils/http';
 import Link from 'next/link';
+import getToken from '../utils/token'
 
-
-function getCookie(decodedCookie, cname) {
-    var name = cname + "=";
-    var ca = decodedCookie.split(';');
-    for(var i = 0; i <ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0) == ' ') {
-            c = c.substring(1);
-        }
-        if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length);
-        }
-    }
-    return "";
-}
 
 
 class Index extends Component {
 
     static async getInitialProps(props) {
-        let token;
-        if (props.req) {
-         token = getCookie(props.req.headers.cookie, 'x-tasklist-token')
-        } else {
-            token = getCookie(document.cookie, 'x-tasklist-token')
-            console.log('getting cookie from document', token)
-        }
+        let token = getToken(props);
         const data = await http.getJson(`/api/l/`, token);
         return {lists: data.lists, token: token}
     }

@@ -1,7 +1,11 @@
 import Link from 'next/link';
 import Head from 'next/head';
+import { getToken, logout} from '../utils/token';
+
+'../utils/token'
 
 const Header = (props) => {
+    let token = getToken(props);
     return <div>
         <Head>
             <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -42,7 +46,11 @@ const Header = (props) => {
         </Head>
         <div className="header">
             <div id="createLink">
+
                 <Link as="/create" href="/create"><a>Create a new list</a></Link>
+                &nbsp;&ndash;&nbsp;
+                {token && <a href="" onClick={ logout }>Logout</a>}
+                {!token && <Link as="/login" href="/login" ><a>Login</a></Link>}
             </div>
             <Link href="/">
                 <span id='branding'>taskli.st</span>
@@ -59,6 +67,7 @@ const Header = (props) => {
     color:white;
     border-radius: 4px;
     background-color: #222;
+    cursor: pointer;
 }
 
 #createLink {

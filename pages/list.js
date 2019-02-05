@@ -5,7 +5,7 @@ import EditForm from '../components/EditForm';
 import {Component} from 'react';
 import http from '../utils/http';
 import {getColorClassPerUser} from '../utils/colors';
-
+import { getToken } from '../utils/token'
 class List extends Component {
     constructor(props) {
         super(props);
@@ -21,7 +21,8 @@ class List extends Component {
 
     static async getInitialProps(props) {
         let key = props.query.title;
-        const data = await http.getJson(`/api/l/${key}/`);
+        let token = getToken(props)
+        const data = await http.getJson(`/api/l/${key}/`, token);
 
         return {
             list: data,
