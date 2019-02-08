@@ -1,5 +1,6 @@
 const express = require('express')
 const next = require('next')
+var port = process.env.PORT || 3001;
 
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
@@ -19,7 +20,7 @@ app.prepare()
     return handle(req, res)
   })
 
-  server.listen(3001, (err) => {
+  server.listen(port, (err) => {
     if (err) throw err
   })
 })
