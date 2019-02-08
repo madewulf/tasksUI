@@ -3,7 +3,7 @@ import getConfig from 'next/config'
 const {publicRuntimeConfig} = getConfig()
 
 async function jsonReq(path, method, body, token) {
-    const url = "http://localhost:8000" + path
+    const url = "https://tasks.multitasked.net" + path
     const headers = {
         'Accept': 'application/json, text/plain, */*',
         'Content-Type': 'application/json'
