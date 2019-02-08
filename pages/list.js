@@ -77,7 +77,6 @@ class List extends Component {
     }
 
     taskEdit(taskKey) {
-
         const listClone = JSON.parse(JSON.stringify(this.state.list));
         listClone.tasks.map((task) => {
             if (task.key == taskKey) {
@@ -138,12 +137,10 @@ class List extends Component {
 
         }
 
-
-
         return <Layout meta={props.list}>
             <div className="list-edit-icon"  onClick={() => this.onEditList()}><i className="far fa-edit fa-xs"></i></div>
-            <h1>{props.list.name} </h1>
-            <p>{props.list.description}</p>
+            <h1>{this.state.list.name} </h1>
+            <p>{this.state.list.description}</p>
             <div>
                 {list.tasks.map((task) => {
                     const className = 'taskText ' + ((task.status === 'done') ? 'strike' : '');

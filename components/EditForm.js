@@ -8,6 +8,7 @@ class EditForm extends Component {
     }
 
     async onFeatureChanged(name, value) {
+        console.log('onFeatureChanged', name, value)
         if (name) {
             let body = {}
             body[name] = value
@@ -23,15 +24,15 @@ class EditForm extends Component {
             <input type="text" id='name-form-input' value={this.state ? this.state.name : ''}
                    onChange={(event) => {
                        this.setState({name: event.target.value});
-                   }} onKeyUp={(e) => {
-                if (e && e.key == 'Enter') this.onFeatureChanged('name', this.state.name);
+                   }} onBlur={() => {
+                this.onFeatureChanged('name', this.state.name);
             }}/>
             <div className="list-field">Description</div>
             <input type="text" id='name-form-input' value={this.state ? this.state.description : ''}
                    onChange={(event) => {
                        this.setState({description: event.target.value});
-                   }} onKeyUp={(e) => {
-                if (e && e.key == 'Enter') this.onFeatureChanged('description', this.state.description);
+                   }} onBlur={() => {
+                 this.onFeatureChanged('description', this.state.description);
             }}/>
 
             <div className="list-field">Assignation</div>
