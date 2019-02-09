@@ -19,7 +19,7 @@ class CreatePage extends Component {
     }
     render() {
         return <Layout>
-            <h2>Login</h2>
+            <h2>Create account</h2>
             <div>Username</div><input type="text" id="username" value={this.state.username}
                                       onChange={(event) => {
                                           this.setState({ username: event.target.value, error: '' });
